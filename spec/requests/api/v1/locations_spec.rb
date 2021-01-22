@@ -8,7 +8,7 @@ RSpec.describe 'api/locations', type: :request do
       produces 'application/json'
 
       description <<~TEXT
-
+        List of all created locations
       TEXT
 
       response '200', 'Location Index' do
@@ -25,12 +25,11 @@ RSpec.describe 'api/locations', type: :request do
       produces 'application/json'
 
       description <<~TEXT
-
+        In order to hold inventory, a location must first be created.
       TEXT
 
       parameter name: :location, in: :body, schema: { '$ref': '#/components/schemas/new_location' }
 
-      # FIXME: Change this let
       response '201', 'Location Created' do
         let(:location) { { name: 'My Location', description: 'First store created' } }
 

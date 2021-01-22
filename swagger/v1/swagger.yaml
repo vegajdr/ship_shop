@@ -10,7 +10,9 @@ paths:
       summary: Location index
       tags:
       - Location
-      description: "\n"
+      description: 'List of all created locations
+
+'
       responses:
         '200':
           description: Location Index
@@ -24,7 +26,9 @@ paths:
       summary: Creates a location
       tags:
       - Location
-      description: "\n"
+      description: 'In order to hold inventory, a location must first be created.
+
+'
       parameters: []
       responses:
         '201':
@@ -40,14 +44,21 @@ paths:
               "$ref": "#/components/schemas/new_location"
   "/api/v1/products":
     post:
-      summary: Creates a product
+      summary: Registers a product
       tags:
       - Product
-      description: "\n"
+      description: |
+        This endpoint allows for a bulk registration of products to be sold in your store. An array can be sent in the
+        request body with each product's information.
+
+        It is _important_ to note that products are identified by their SKU, therefore if a registered product is found
+        with the same SKU, the information passed in the request will be ignored for that particular product.
+
+        Please refer to the UpdateProduct endpoint in order to modify an existing product's information
       parameters: []
       responses:
         '201':
-          description: Stock levels created
+          description: Product Registration
           content: {}
       requestBody:
         content:
@@ -60,13 +71,9 @@ paths:
       tags:
       - Stock
       description: |
-        This endpoint allows for the replenishing of stock for a specific set of products.
+        This endpoint allows for the replenishing of stock in a given location for a specific set of products.
 
-        If no location_id is provided, your default Location will be used to add the provided stock amounts.
-
-        For convenience it creates products that have not been registered based on the product SKU. If a product has
-        already been registered with the SKU provided, other attributes for the product will be ignored and the product
-        object will not be updated, only the stock quantities for the given location
+        Requires the creation of a location and registration of products
       parameters:
       - name: location_id
         in: path
@@ -95,12 +102,12 @@ tags:
   description: 'Representation of a location holding inventory (Stock)
 
 '
-- name: Stock
-  description: 'Location Stock
-
-'
 - name: Product
   description: 'Known Product
+
+'
+- name: Stock
+  description: 'Location Stock
 
 '
 components:

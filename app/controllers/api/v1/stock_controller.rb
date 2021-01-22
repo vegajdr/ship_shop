@@ -22,8 +22,13 @@ module Api
 
       def create_stock_params
         params
-          .require(:stock)
-          .permit!
+          .permit(
+            :location_id,
+            stock: [
+              :sku,
+              :quantity
+            ]
+          )
       end
     end
   end

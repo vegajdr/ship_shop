@@ -6,7 +6,7 @@ class StockQuantity
 
     INTERACTORS = [
       EnsureLocation,
-      ::Product::Create::Ensure,
+      LoadProducts,
       IncreaseStockQuantity
     ].freeze
 

@@ -8,13 +8,9 @@ RSpec.describe 'api/stock', type: :request do
       tags 'Stock'
       consumes 'application/json'
       description <<~TEXT
-        This endpoint allows for the replenishing of stock for a specific set of products.
+        This endpoint allows for the replenishing of stock in a given location for a specific set of products.
 
-        If no location_id is provided, your default Location will be used to add the provided stock amounts.
-
-        For convenience it creates products that have not been registered based on the product SKU. If a product has
-        already been registered with the SKU provided, other attributes for the product will be ignored and the product
-        object will not be updated, only the stock quantities for the given location
+        Requires the creation of a location and registration of products
       TEXT
 
       parameter name: :location_id, in: :path, type: :string

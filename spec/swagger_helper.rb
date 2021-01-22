@@ -36,15 +36,15 @@ RSpec.configure do |config|
           TEXT
         },
         {
-          name: 'Stock',
-          description: <<~TEXT
-            Location Stock
-          TEXT
-        },
-        {
           name: 'Product',
           description: <<~TEXT
             Known Product
+          TEXT
+        },
+        {
+          name: 'Stock',
+          description: <<~TEXT
+            Location Stock
           TEXT
         }
       ],
