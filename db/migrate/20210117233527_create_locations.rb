@@ -6,6 +6,8 @@ class CreateLocations < ActiveRecord::Migration[6.0]
       t.string :name
       t.text :description
 
+      t.index :name
+
       t.timestamps
     end
   end

@@ -4,10 +4,14 @@ class StockQuantity
   class Create
     include Interactor::Organizer
 
+    before do
+      context.collection_key = :stock
+    end
+
     INTERACTORS = [
-      EnsureLocation,
-      LoadProducts,
-      IncreaseStockQuantity
+      ::Location::Load,
+      ::Product::Load,
+      Increase
     ].freeze
 
     organize INTERACTORS

@@ -8,6 +8,9 @@ class CreateProducts < ActiveRecord::Migration[6.0]
       t.string :sku
       t.decimal :price, default: 0.0
 
+      t.index :name
+      t.index :sku
+
       t.timestamps
     end
   end

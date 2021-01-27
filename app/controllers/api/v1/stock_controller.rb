@@ -8,16 +8,20 @@ module Api
           Location
             .find(params[:location_id])
             .stock_quantities
+            .includes(:product)
         end
 
-        render json: @stock
+        render json: @stock, each_serializer: ::StockSerializer, meta: { total: @stock.to_a.sum(&:amount) }
       end
 
       def create
         interactor = ::StockQuantity::Create.call(params: create_stock_params)
 
-        # FIXME: handle errors
-        render json: interactor.stock_quantities, status: :created
+        if interactor.success?
+          render json: interactor.stock_quantities, status: :created
+        else
+          render json: { errors: interactor.errors }, status: :not_found
+        end
       end
 
       def create_stock_params

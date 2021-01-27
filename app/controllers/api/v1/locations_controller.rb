@@ -18,7 +18,7 @@ module Api
       def create_location_params
         params
           .require(:location)
-          .permit!
+          .permit(:name, :description)
       end
     end
   end

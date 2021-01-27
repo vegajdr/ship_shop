@@ -12,23 +12,27 @@ paths:
       - Location
       description: 'List of all created locations
 
-'
+        '
       responses:
         '200':
           description: Location Index
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/location"
+                type: object
+                properties:
+                  locations:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/location"
     post:
       summary: Creates a location
       tags:
       - Location
-      description: 'In order to hold inventory, a location must first be created.
+      description: |
+        In order to hold inventory, a location must first be created.
 
-'
+        The name for each location is required to be unique
       parameters: []
       responses:
         '201':
@@ -42,48 +46,59 @@ paths:
           application/json:
             schema:
               "$ref": "#/components/schemas/new_location"
+  "/api/v1/product_price_query":
+    post:
+      summary: Returns totals of products given
+      tags:
+      - Product Price Query
+      description: ''
+      parameters: []
+      responses:
+        '201':
+          description: Total results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  price_query:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/product"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                price_query:
+                  type: array
+                  items:
+                    "$ref": "#/components/schemas/new_stock_quantity"
   "/api/v1/products":
     post:
       summary: Registers a product
       tags:
       - Product
       description: |
-        This endpoint allows for a bulk registration of products to be sold in your store. An array can be sent in the
+        This endpoint allows for bulk registration of products to be sold in your store. An array can be sent in the
         request body with each product's information.
 
         It is _important_ to note that products are identified by their SKU, therefore if a registered product is found
         with the same SKU, the information passed in the request will be ignored for that particular product.
-
-        Please refer to the UpdateProduct endpoint in order to modify an existing product's information
       parameters: []
       responses:
         '201':
           description: Product Registration
-          content: {}
-      requestBody:
-        content:
-          application/json:
-            schema:
-              "$ref": "#/components/schemas/new_product"
-  "/api/v1/locations/{location_id}/stock":
-    post:
-      summary: Creates inventory in a location
-      tags:
-      - Stock
-      description: |
-        This endpoint allows for the replenishing of stock in a given location for a specific set of products.
-
-        Requires the creation of a location and registration of products
-      parameters:
-      - name: location_id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '201':
-          description: Stock levels created
-          content: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/product"
       requestBody:
         content:
           application/json:
@@ -93,25 +108,237 @@ paths:
                 products:
                   type: array
                   items:
-                    "$ref": "#/components/schemas/product"
+                    "$ref": "#/components/schemas/new_product"
+  "/api/v1/purchase/orders":
+    get:
+      summary: Order index
+      tags:
+      - Order
+      description: 'List of all orders by given location
+
+        '
+      parameters:
+      - name: location_id
+        in: query
+        required: true
+        example: 1
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Order Index
+          content: {}
+    post:
+      summary: Submits an order
+      tags:
+      - Order
+      description: "\n"
+      parameters:
+      - name: location_id
+        in: query
+        example: 1
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Order Placed
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/order"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                products:
+                  type: array
+                  items:
+                    "$ref": "#/components/schemas/new_stock_quantity"
+  "/api/v1/locations/{location_id}/reset":
+    post:
+      summary: Submits a reset for given location
+      tags:
+      - Location Reset
+      description: |
+        *CAUTION* This endpoint issues destructive actions. It will reset the stock quantities to a set default
+        (See Stock Level Default). It will also delete all orders associated to the location.
+      parameters:
+      - name: location_id
+        in: path
+        example: 1
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Location Reset
+          content: {}
+  "/api/v1/locations/{location_id}/stock_level_defaults":
+    post:
+      summary: Sets Inventory Default Levels for given location
+      tags:
+      - Stock Level Default
+      description: ''
+      parameters:
+      - name: location_id
+        in: path
+        example: 1
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Stock level defaults created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  defaults:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/stock_quantity"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                defaults:
+                  type: array
+                  items:
+                    "$ref": "#/components/schemas/new_stock_quantity"
+  "/api/v1/locations/{location_id}/stock":
+    get:
+      summary: Stock index
+      tags:
+      - Stock
+      description: 'Displays the current stock of a given location
+
+        '
+      parameters:
+      - name: location_id
+        in: path
+        example: 1
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Stock Quantities
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stock:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/stock_quantity"
+    post:
+      summary: Creates inventory in a location
+      tags:
+      - Stock
+      description: |
+        This endpoint allows for the replenishing of stock in a given location for a specific set of products.
+
+        Requires the creation of a location and registration of products.
+
+        If provided with duplicate SKU's inside the request body, the quantities will be totaled together
+      parameters:
+      - name: location_id
+        in: path
+        example: 1
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Stock levels created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stock:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/stock_quantity"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                stock:
+                  type: array
+                  items:
+                    "$ref": "#/components/schemas/new_stock_quantity"
 servers:
+- url: https://ship-shop-klearly-cc.herokuapp.com
+  description: Heroku Server
 - url: http://localhost:3000
   description: Local Server
 tags:
 - name: Location
-  description: 'Representation of a location holding inventory (Stock)
+  description: 'Representation of a location holding inventory (Stock). Must be created
+    before any inventory can be added
 
-'
+    '
+- name: Location Reset
+  description: 'Resets location inventory and orders
+
+    '
 - name: Product
-  description: 'Known Product
-
-'
+  description: |
+    Represents a known good product available to be sold, holds price and sku information. The sku acts as the
+    uuid for the product therefore it cannot be duplicated. Must be created before any inventory can be added
+- name: Product Price Query
 - name: Stock
-  description: 'Location Stock
+  description: 'Information regarding quantities of products in a given location
 
-'
+    '
+- name: Stock Level Default
+- name: Order
+  description: 'Purchase order of a set of grocery items
+
+    '
 components:
   schemas:
+    stock_quantity:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        sku:
+          type: string
+          example: '12345'
+        amount:
+          type: number
+          example: '1.55'
+        quantity:
+          type: integer
+          format: int64
+          example: 5
+        product:
+          "$ref": "#/components/schemas/product"
+    new_stock_quantity:
+      type: object
+      properties:
+        sku:
+          type: string
+          example: '12345'
+        quantity:
+          type: integer
+          format: int64
+          example: 5
+      required:
+      - sku
+      - quantity
     product:
       type: object
       properties:
@@ -128,9 +355,8 @@ components:
           type: string
           example: '12345'
         price:
-          type: number
-          format: double
-          example: 1.5
+          type: string
+          example: '1.5'
         quantity:
           type: integer
           format: int64
@@ -150,6 +376,11 @@ components:
           type: number
           format: double
           example: 1.5
+      required:
+      - name
+      - description
+      - sku
+      - price
     location:
       type: object
       properties:
@@ -172,3 +403,16 @@ components:
         description:
           type: string
           example: My first store
+      required:
+      - name
+      - description
+    order:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        location_id:
+          type: integer
+          format: int64
+          example: 1

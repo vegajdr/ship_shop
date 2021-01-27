@@ -11,8 +11,8 @@ gem 'rails', '~> 6.0.3', '>= 6.0.3.4'
 gem 'pg', '>= 0.18', '< 2.0'
 # Use Puma as the app server
 gem 'active_model_serializers', '~> 0.9.7'
-gem 'interactor'
-gem 'pry-rails'
+gem 'interactor', '~> 3.1', '>= 3.1.1'
+gem 'pry-rails', '~> 0.3.9'
 gem 'puma', '~> 4.1'
 gem 'rswag-api'
 gem 'rswag-ui'
@@ -35,7 +35,6 @@ gem 'bootsnap', '>= 1.4.2', require: false
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'factory_bot_rails', '~> 4.11', '>= 4.11.1'
-  gem 'pry-byebug', platforms: %i[mri mingw x64_mingw]
   gem 'rspec-rails'
   gem 'rswag-specs'
 end

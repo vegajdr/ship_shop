@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'swagger_helper'
 
 RSpec.describe 'api/locations', type: :request do
@@ -12,8 +14,13 @@ RSpec.describe 'api/locations', type: :request do
       TEXT
 
       response '200', 'Location Index' do
-        schema type: 'array',
-               items: { '$ref': '#/components/schemas/location' }
+        schema type: 'object',
+               properties: {
+                 locations: {
+                   type: 'array',
+                   items: { '$ref': '#/components/schemas/location' }
+                 }
+               }
 
         run_test!
       end
@@ -26,9 +33,14 @@ RSpec.describe 'api/locations', type: :request do
 
       description <<~TEXT
         In order to hold inventory, a location must first be created.
+
+        The name for each location is required to be unique
       TEXT
 
-      parameter name: :location, in: :body, schema: { '$ref': '#/components/schemas/new_location' }
+      parameter name: :location,
+                in: :body,
+                required: true,
+                schema: { '$ref': '#/components/schemas/new_location' }
 
       response '201', 'Location Created' do
         let(:location) { { name: 'My Location', description: 'First store created' } }
