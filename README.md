@@ -10,6 +10,7 @@ rails server
 The best way to get familiarized with the design is to follow the API docs:
 
 Locally: http://localhost:3000/api-docs/index.html
+
 Heroku:  https://ship-shop-klearly-cc.herokuapp.com/api-docs/index.html
 
 Notes:
