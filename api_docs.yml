@@ -1,0 +1,75 @@
+openapi: "3.0.0"
+
+info:
+  title: ShipShop API
+  description: Documentation for online groceries shopping engine API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api/v1/
+    description: Local server
+tags:
+  - name: Stock
+    description: Location Stock
+
+paths:
+  /stock:
+    post:
+      tags:
+        - Stock
+      summary: Returns a list of city weathers.
+      description: This endpoint returns the weather for each city requested. Will also return the highest and lowest city based on temperature. In the event of a temperature tie, alphabetical order is taken into account
+      requestBody:
+        $ref: "#/components/requestBodies/Stock"
+
+      responses:
+        '200':    # status code
+          description: A JSON array city weathers with highest and lowest defined
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+components:
+  requestBodies:
+    Stock:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              location_id:
+                type: integer
+                format: int64
+              products:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+      description: List of Product object
+      required: true
+
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Orange
+        description:
+          type: string
+        sku:
+          type: string
+          example: "12345"
+        price:
+          type: number
+          format: double
+          example: 1.50
+        quantity:
+          type: integer
+          format: int64
+          example: 5
